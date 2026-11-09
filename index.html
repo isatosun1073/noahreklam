@@ -7,7 +7,21 @@
 <meta property="og:title" content="Noah Reklam Ajansı | İstanbul Sosyal Medya ve Reklam Ajansı">
 <meta property="og:description" content="İstanbul'da strateji, tasarım ve performans odaklı dijital yönetim.">
 <link rel="icon" href="assets/noah-boat.png">
-<style>body.tone-light .brand .wm{color:#151210}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}</style>
+<style>body.tone-light .brand .wm{color:#151210}[hidden]{display:none!important}:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}/* ses */
+.snd{position:fixed;z-index:57;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;gap:10px;padding:10px 14px 10px 12px;border-radius:100px;border:1px solid currentColor;background:rgba(6,8,10,.55);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);color:var(--bone);cursor:pointer;transition:color .4s,background .4s}
+body.tone-light .snd{color:var(--char);background:rgba(232,226,214,.7)}
+.snd .bars{display:flex;align-items:flex-end;gap:2px;height:14px}
+.snd .bars i{display:block;width:2px;height:3px;background:currentColor;transition:height .3s}
+.snd.on .bars i{background:var(--signal);animation:eq 1s ease-in-out infinite}
+.snd.on .bars i:nth-child(2){animation-delay:-.3s}.snd.on .bars i:nth-child(3){animation-delay:-.6s}.snd.on .bars i:nth-child(4){animation-delay:-.15s}
+@keyframes eq{0%,100%{height:3px}50%{height:14px}}
+.snd .lbl{font-family:var(--f-m);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+@media (max-width:760px){.snd .lbl{display:none}.snd{padding:0;width:44px;height:44px;justify-content:center;left:auto;right:max(22px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px))}}
+.ld-go{display:grid;justify-items:center;gap:14px;animation:ldIn .6s ease both}
+.ld-go div{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.ld-go p{margin:0;color:var(--mist)}
+@keyframes ldIn{from{opacity:0;transform:translateY(8px)}}
+</style>
 <title>Noah Reklam Ajansı | İstanbul Sosyal Medya ve Reklam Ajansı</title>
 <meta name="description" content="Noah Reklam Ajansı: İstanbul'da sosyal medya yönetimi, Meta, Instagram, TikTok ve Google reklam yönetimi, marka kimliği, web tasarım, motion ve 3D. Aylık paketler 15.000 TL'den başlıyor.">
 <meta name="keywords" content="reklam ajansı istanbul, sosyal medya ajansı, sosyal medya yönetimi, instagram yönetimi, meta reklam yönetimi, marka kimliği, logo tasarımı, motion design, noah reklam">
@@ -363,7 +377,8 @@ footer{position:relative;z-index:2;background:var(--ink);border-top:1px solid rg
 
 <div id="loader" role="status" aria-label="Site yükleniyor">
   <div class="ld"><div class="ld-boat"><img src="assets/noah-boat.png" alt=""><div class="w" id="ldW"></div></div>
-  <div class="ld-meta mono"><span>Gemi inşa ediliyor</span><b id="ldN">000</b><span>/ 300 arşın</span></div></div>
+  <div class="ld-meta mono" id="ldMeta"><span>Gemi inşa ediliyor</span><b id="ldN">000</b><span>/ 300 arşın</span></div>
+  <div class="ld-go" id="ldGo" hidden><div><button class="btn red" id="goSnd">Sesli gir <span class="arr">→</span></button><button class="btn" id="goMute" style="color:var(--bone)">Sessiz gir</button></div><p class="mono">Bu yolculuk sesli. Kulaklıkla daha güzel.</p></div></div>
 </div>
 <div class="cur" id="cur" aria-hidden="true"><div class="ring"></div><div class="lbl" id="curLbl"></div></div>
 
@@ -578,6 +593,7 @@ footer{position:relative;z-index:2;background:var(--ink);border-top:1px solid rg
   <p>Sitemizi geliştirmek ve reklamlarımızı ölçmek için çerez kullanıyoruz. Ayrıntılar <a href="#" id="ckMore">Çerez ve Gizlilik Metni</a>'nde.</p>
   <div class="ck-b"><button class="ok" id="ckYes">Kabul et</button><button id="ckNo">Sadece gerekli</button></div>
 </div>
+<button class="snd mono" id="snd" aria-pressed="false" aria-label="Sesi aç" hidden><span class="bars" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="lbl">Ses kapalı</span></button>
 <a class="wa" id="wa" href="#" target="_blank" rel="noopener" aria-label="WhatsApp ile yaz" hidden><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#fff" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.8 2.3.9 2.5c.1.2 1.6 2.5 4 3.5 1.5.6 2.1.7 2.8.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.5-.3z"/></svg></a>
 <div id="gizlilik" role="dialog" aria-modal="true" aria-label="Çerez ve Gizlilik Metni" hidden style="position:fixed;inset:0;z-index:96;background:var(--paper);color:var(--char);overflow-y:auto">
   <button class="btn r-close" id="gzClose">Kapat ✕</button>
@@ -894,11 +910,120 @@ $("#ckNo").onclick=()=>{LS.set("noah_ck","no");ck.hidden=true;};
 $("#ckMore").onclick=e=>{e.preventDefault();gz.hidden=false;};$("#gzClose").onclick=()=>gz.hidden=true;$("#gzLink").onclick=e=>{e.preventDefault();gz.hidden=false;};
 if(CONTACT.whatsapp){const w=$("#wa");w.href="https://wa.me/"+CONTACT.whatsapp+"?text="+encodeURIComponent("Merhaba, Noah Reklam Ajansı ile çalışmak istiyorum.");w.hidden=false;w.addEventListener("click",()=>track("whatsapp_click"));}
 document.addEventListener("click",e=>{const p=e.target.closest("[data-pick]");if(p)track("select_package",{package:p.dataset.pick});if(e.target.closest("a[href^='tel:'],a[href^='mailto:']"))track("contact_click");});
+/* ===== SES: tamamen kodla üretilen müzik ve efektler (dosya yok, telif yok) ===== */
+const SND=(()=>{
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return{ok:false};
+  let ctx=null,master,verbIn,on=false,BUF,L={},sched=null,chord=null,lastK=null,hamNext=0,inkNext=0,boxNext=0,birdNext=0,thNext=0,creakNext=0;
+  const LS_K="noah_snd";
+  const mtof=m=>440*Math.pow(2,(m-69)/12);
+  function nbuf(type,sec){const n=Math.floor(ctx.sampleRate*sec),b=ctx.createBuffer(1,n,ctx.sampleRate),d=b.getChannelData(0);let l=0,b0=0,b1=0,b2=0;
+    for(let i=0;i<n;i++){const w=Math.random()*2-1;if(type==="brown"){l=(l+.02*w)/1.02;d[i]=l*3.5;}else if(type==="pink"){b0=.997*b0+w*.029591;b1=.985*b1+w*.032534;b2=.95*b2+w*.048056;d[i]=(b0+b1+b2+w*.1848)*.5;}else d[i]=w;}return b;}
+  function impulse(sec,dec){const n=Math.floor(ctx.sampleRate*sec),b=ctx.createBuffer(2,n,ctx.sampleRate);for(let c=0;c<2;c++){const d=b.getChannelData(c);for(let i=0;i<n;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/n,dec);}return b;}
+  const src=t=>{const s=ctx.createBufferSource();s.buffer=BUF[t];s.loop=true;s.start(ctx.currentTime+Math.random()*.1,Math.random()*3);return s;};
+  const filt=(type,f,q=.7)=>{const x=ctx.createBiquadFilter();x.type=type;x.frequency.value=f;x.Q.value=q;return x;};
+  const gain=v=>{const g=ctx.createGain();g.gain.value=v;return g;};
+  const chain=(...n)=>{for(let i=0;i<n.length-1;i++)n[i].connect(n[i+1]);return n[n.length-1];};
+  function layer(name,base,wet=0){const g=gain(0);g.connect(master);if(wet){const s=gain(wet);g.connect(s);s.connect(verbIn);}L[name]={g,base};return g;}
+  function lfo(freq,depth,param){const o=ctx.createOscillator();o.frequency.value=freq;const d=gain(depth);o.connect(d);d.connect(param);o.start();return o;}
+
+  function build(){
+    BUF={white:nbuf("white",3),pink:nbuf("pink",5),brown:nbuf("brown",6)};
+    master=gain(0);const comp=ctx.createDynamicsCompressor();comp.threshold.value=-18;comp.ratio.value=3;master.connect(comp);comp.connect(ctx.destination);
+    const cv=ctx.createConvolver();cv.buffer=impulse(3.4,2.4);verbIn=gain(1);verbIn.connect(cv);cv.connect(master);
+    // deniz: kahverengi gürültü + dalga LFO'ları
+    const sea=layer("sea",.55,.15);const wave=gain(.55);lfo(.07,.3,wave.gain);lfo(.113,.18,wave.gain);
+    chain(src("brown"),filt("lowpass",460),wave,sea);
+    const foam=gain(.12);lfo(.07,.1,foam.gain);chain(src("pink"),filt("bandpass",1100,.6),foam,sea);
+    // yağmur
+    const rain=layer("rain",.045);chain(src("white"),filt("highpass",2400),filt("lowpass",7500),rain);
+    // drone: koyu, alçak
+    const dr=layer("drone",.11,.3);const dlp=filt("lowpass",260,2);lfo(.05,90,dlp.frequency);dlp.connect(dr);
+    [[45,"sawtooth",0],[45,"sawtooth",7],[52,"triangle",-4],[33,"sine",0]].forEach(([m,t,c])=>{const o=ctx.createOscillator();o.type=t;o.frequency.value=mtof(m);o.detune.value=c;const g=gain(m===33?.9:.32);o.connect(g);g.connect(dlp);o.start();});
+    // pad: 5 ses, akor bölüme göre kayar
+    const pad=layer("pad",.09,.55);const plp=filt("lowpass",1300,.5);lfo(.03,500,plp.frequency);plp.connect(pad);
+    L.pad.v=[0,1,2,3,4].map(i=>{const o=ctx.createOscillator();o.type=i%2?"triangle":"sine";o.detune.value=(i-2)*3;const g=gain(i===0?.5:.3);o.connect(g);g.connect(plp);o.start();return o;});
+    ["box","ham","ink","bird","fx"].forEach(n=>layer(n,n==="fx"?1:n==="ham"?.5:n==="ink"?.35:n==="bird"?.16:.22,n==="ham"?.25:.5));
+    L.fx.g.gain.value=1;
+  }
+  const CH={dm:[38,50,53,57,62],dm9:[38,50,57,60,64],f:[41,53,57,60,64],c:[36,52,55,59,62],am:[45,52,57,60,64],d:[38,54,57,62,64]};
+  const MIX={
+    tufan:{sea:1,rain:1,drone:1,pad:0,ham:0,ink:0,box:0,bird:0,c:"dm"},
+    tersane:{sea:.4,rain:0,drone:.3,pad:.35,ham:1,ink:0,box:0,bird:0,c:"dm"},
+    kaptan:{sea:.25,rain:0,drone:.55,pad:.85,ham:0,ink:1,box:0,bird:0,c:"dm9"},
+    ambar:{sea:.18,rain:0,drone:0,pad:.6,ham:0,ink:0,box:1,bird:0,c:"f"},
+    biletler:{sea:.18,rain:0,drone:0,pad:.6,ham:0,ink:0,box:1,bird:0,c:"c"},
+    rota:{sea:.22,rain:0,drone:0,pad:.6,ham:0,ink:0,box:.8,bird:0,c:"am"},
+    defter:{sea:.18,rain:0,drone:0,pad:.55,ham:0,ink:0,box:.9,bird:0,c:"f"},
+    kara:{sea:.75,rain:0,drone:0,pad:.8,ham:0,ink:0,box:.25,bird:1,c:"d"}};
+  function mix(k){const m=MIX[k]||MIX.tufan,t=ctx.currentTime;for(const n of ["sea","rain","drone","pad","ham","ink","box","bird"])L[n].g.gain.setTargetAtTime(m[n]*L[n].base,t,1.4);
+    if(m.c!==chord){chord=m.c;CH[chord].forEach((mm,i)=>L.pad.v[i].frequency.setTargetAtTime(mtof(mm),t,.9));}}
+
+  // ---- tek atımlık sesler ----
+  function env(g,t,a,peak,d){g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(.0001,t+a+d);}
+  function burst(dest,t,{type="white",f=1000,q=1,ft="bandpass",a=.002,peak=.5,d=.1,f2}={}){const s=ctx.createBufferSource();s.buffer=BUF[type];const x=filt(ft,f,q);if(f2)x.frequency.exponentialRampToValueAtTime(f2,t+a+d);const g=gain(0);env(g,t,a,peak,d);s.connect(x);x.connect(g);g.connect(dest);s.start(t,Math.random()*2);s.stop(t+a+d+.05);}
+  function tone(dest,t,{f=440,f2,type="sine",a=.005,peak=.3,d=.4}={}){const o=ctx.createOscillator();o.type=type;o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+a+d*.6);const g=gain(0);env(g,t,a,peak,d);o.connect(g);g.connect(dest);o.start(t);o.stop(t+a+d+.05);}
+  const FX={
+    hammer(t,dest=L.ham.g){tone(dest,t,{f:190,f2:58,peak:.9,d:.16});burst(dest,t,{f:2300,q:1.5,peak:.5,d:.05});burst(dest,t+.012,{type:"brown",ft:"lowpass",f:900,peak:.6,d:.12});},
+    creak(t){const o=ctx.createOscillator();o.type="sawtooth";o.frequency.setValueAtTime(95,t);o.frequency.linearRampToValueAtTime(140+Math.random()*60,t+.9);const bp=filt("bandpass",700,14);bp.frequency.linearRampToValueAtTime(1300,t+.9);const g=gain(0);env(g,t,.25,.07,1);o.connect(bp);bp.connect(g);g.connect(L.ham.g);o.start(t);o.stop(t+1.4);},
+    thunder(t){burst(L.rain.g,t,{type:"brown",ft:"lowpass",f:220,a:.08,peak:6,d:4.5});burst(L.rain.g,t+.05,{type:"pink",ft:"lowpass",f:700,a:.01,peak:2,d:.8});},
+    quill(t){const n=3+Math.floor(Math.random()*5);for(let i=0;i<n;i++)burst(L.ink.g,t+i*(.05+Math.random()*.05),{f:4200+Math.random()*1500,q:3,a:.004,peak:.25,d:.04});},
+    drip(t){tone(L.ink.g,t,{f:520,f2:1500,peak:.35,d:.12});},
+    note(t){const sc=[72,74,76,79,81,84,86,88];const m=sc[Math.floor(Math.random()*sc.length)];tone(L.box.g,t,{f:mtof(m),peak:.32,d:1.8});tone(L.box.g,t,{f:mtof(m+12),peak:.06,d:.7});},
+    bird(t){const n=2+Math.floor(Math.random()*4),b=2600+Math.random()*1400;for(let i=0;i<n;i++)tone(L.bird.g,t+i*.11,{f:b,f2:b*(1.3+Math.random()*.4),peak:.18,d:.07});},
+    // arayüz
+    click(){const t=ctx.currentTime;tone(L.fx.g,t,{f:340,f2:170,peak:.22,d:.09});burst(L.fx.g,t,{f:1800,q:2,peak:.12,d:.03});},
+    stamp(){const t=ctx.currentTime;tone(L.fx.g,t,{f:110,f2:45,peak:.55,d:.22});burst(L.fx.g,t,{type:"pink",ft:"lowpass",f:1600,peak:.5,d:.12});burst(L.fx.g,t+.03,{f:3000,q:1,peak:.12,d:.08});},
+    page(){const t=ctx.currentTime;burst(L.fx.g,t,{type:"pink",f:700,f2:3200,q:.8,a:.03,peak:.35,d:.28});},
+    whoosh(){const t=ctx.currentTime;burst(L.fx.g,t,{type:"pink",f:300,f2:2000,q:1.2,a:.15,peak:.25,d:.5});},
+    flutter(){const t=ctx.currentTime;for(let i=0;i<7;i++)burst(L.fx.g,t+i*.075,{type:"pink",f:900+i*60,q:1,a:.01,peak:.3,d:.05});FX.bird(t+.5);},
+    bell(){const t=ctx.currentTime;const s=gain(1);s.connect(L.fx.g);const s2=gain(.5);s.connect(s2);s2.connect(verbIn);[[1,.35],[2.01,.2],[2.76,.16],[5.4,.07],[8.93,.04]].forEach(([r,p])=>tone(s,t,{f:392*r,peak:p,a:.003,d:2.8/r**.3}));},
+    tick(){const t=ctx.currentTime;burst(L.fx.g,t,{f:3500,q:4,peak:.05,d:.015});}
+  };
+  // ---- ritim zamanlayıcı ----
+  function loop(){if(!on)return;const t=ctx.currentTime,m=MIX[lastK]||MIX.tufan,ahead=t+.15;
+    if(m.ham>.1&&hamNext<ahead){const bp=typeof tersaneP==="number"?tersaneP:.3;const iv=.95-bp*.6;FX.hammer(Math.max(hamNext,t));if(Math.random()<.35)FX.hammer(Math.max(hamNext,t)+iv*.5);hamNext=Math.max(hamNext,t)+iv*(Math.random()<.2?2:1);}
+    if(m.ham>.1&&creakNext<t){FX.creak(t+.05);creakNext=t+5+Math.random()*6;}
+    if(m.rain>.1&&thNext<t){if(thNext)FX.thunder(t+.05);thNext=t+9+Math.random()*14;}
+    if(m.ink>.1&&inkNext<t){Math.random()<.7?FX.quill(t+.05):FX.drip(t+.05);inkNext=t+1.2+Math.random()*2.6;}
+    if(m.box>.1&&boxNext<t){FX.note(t+.05);if(Math.random()<.4)FX.note(t+.35);boxNext=t+1.1+Math.random()*2.4;}
+    if(m.bird>.1&&birdNext<t){FX.bird(t+.05);birdNext=t+1.8+Math.random()*4;}
+  }
+  let tersaneP=.3;
+  function start(){if(!ctx){ctx=new AC();build();}ctx.resume();on=true;master.gain.cancelScheduledValues(ctx.currentTime);master.gain.setTargetAtTime(.85,ctx.currentTime,.8);mix(lastK||"tufan");if(!sched)sched=setInterval(loop,90);ui();}
+  function stop(){on=false;if(ctx){master.gain.setTargetAtTime(0,ctx.currentTime,.25);setTimeout(()=>{if(!on)ctx.suspend();},900);}ui();}
+  function ui(){const b=document.getElementById("snd");if(!b)return;b.classList.toggle("on",on);b.setAttribute("aria-pressed",String(on));b.setAttribute("aria-label",on?"Sesi kapat":"Sesi aç");b.querySelector(".lbl").textContent=on?"Ses açık":"Ses kapalı";}
+  return{ok:true,
+    get on(){return on},
+    pref(){try{return localStorage.getItem(LS_K)}catch(e){return null}},
+    save(v){try{localStorage.setItem(LS_K,v)}catch(e){}},
+    start,stop,
+    toggle(){on?stop():start();this.save(on?"on":"off");},
+    update(k,tp){tersaneP=tp;if(k!==lastK){lastK=k;if(on&&ctx)mix(k);}},
+    fx(n){if(on&&ctx&&FX[n])FX[n]();},
+    vis(h){if(!ctx)return;if(h)ctx.suspend();else if(on)ctx.resume();}
+  };
+})();
+if(SND.ok){
+  const sb=$("#snd");sb.hidden=false;sb.addEventListener("click",()=>{SND.toggle();});
+  addEventListener("scroll",()=>SND.update(curK,prog($("#tersane"))),{passive:true});SND.update(curK,0);
+  document.addEventListener("visibilitychange",()=>SND.vis(document.hidden));
+  // geri dönen ziyaretçi sesli girmeyi seçtiyse: ilk dokunuşta başlat
+  if(SND.pref()==="on"){const arm=e=>{if(e.target.closest&&e.target.closest("#snd"))return;SND.start();["pointerdown","keydown"].forEach(t=>removeEventListener(t,arm,true));};["pointerdown","keydown"].forEach(t=>addEventListener(t,arm,true));}
+  // arayüz efektleri
+  document.addEventListener("click",e=>{const t=e.target;
+    if(t.closest("[data-pick]"))SND.fx("stamp");else if(t.closest(".cargo>button"))SND.fx("click");else if(t.closest(".entry"))SND.fx("page");else if(t.closest("#dove"))SND.fx("flutter");else if(t.closest("[data-go]"))SND.fx("whoosh");else if(t.closest(".pkgs label,.btn"))SND.fx("click");},true);
+  $("#form").addEventListener("submit",()=>SND.fx("bell"),true);
+  if(FINE){let lt=0;document.addEventListener("pointerover",e=>{if(!e.target.closest(".cargo>button,.entry,.gauge a,.ticket .t-cta"))return;const n=performance.now();if(n-lt>90){lt=n;SND.fx("tick");}});}
+}
+
 /* ===== loader ===== */
 const t0=performance.now();let ready=false;
 Promise.race([Promise.all([document.fonts?document.fonts.ready:Promise.resolve(),new Promise(r=>{const i=new Image();i.onload=i.onerror=r;i.src="assets/isa.webp"})]),new Promise(r=>setTimeout(r,3500))]).then(()=>ready=true);
 (function tick(now){let p=clamp((now-t0)/(RM?300:1700));if(!ready)p=Math.min(p,.92);$("#ldN").textContent=String(Math.round((p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2)*300)).padStart(3,"0");$("#ldW").style.setProperty("--lvl",p*100+"%");
-  if(p>=1){$("#loader").classList.add("out");setTimeout(()=>$("#loader").hidden=true,1200);return;}requestAnimationFrame(tick)})(t0);
+  if(p>=1){const out=()=>{$("#loader").classList.add("out");setTimeout(()=>$("#loader").hidden=true,1200);};
+    if(SND.ok&&!SND.pref()){$("#ldMeta").hidden=true;$("#ldGo").hidden=false;$("#ldW").style.transition="height 1.2s cubic-bezier(.2,.7,.2,1)";$("#ldW").style.setProperty("--lvl","30%");$("#loader").setAttribute("aria-label","Giriş seçimi");setTimeout(()=>$("#goSnd").focus({preventScroll:true}),50);
+      $("#goSnd").onclick=()=>{SND.save("on");SND.start();SND.fx("bell");out();};$("#goMute").onclick=()=>{SND.save("off");out();};}
+    else out();return;}requestAnimationFrame(tick)})(t0);
 onScroll();route();
 })();
 </script>
