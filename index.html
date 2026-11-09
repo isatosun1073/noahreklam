@@ -1086,7 +1086,7 @@ if(SND.ok){
   function leave(){clearTimeout(hideT);sayTok++;SND.hush&&SND.hush();talkSim=0;bub.classList.remove("in");setTimeout(()=>{bub.hidden=true;},250);wrap.classList.remove("in");if(mode==="rope")Lt=-(small()?260:340);state="off";busy=false;mouth(0);setTimeout(()=>{if(state==="off")wrap.hidden=true;},900);}
   async function say(text,id){txt.textContent="";bub.hidden=false;requestAnimationFrame(()=>bub.classList.add("in"));placeBubble();
     const tok=++sayTok,t0=performance.now();const step=()=>{if(tok!==sayTok)return;const n=Math.min(text.length,((performance.now()-t0)/18)|0);txt.textContent=text.slice(0,n);if(n<text.length)setTimeout(step,30);};step();
-    if(SND.ok&&SND.on){const ok=await SND.voice(`assets/kaptan-ses/${id}.mp3`,v=>mouth(v<.02?0:v<.07?1:2));if(ok){mouth(0);return;}}
+    if(SND.ok&&SND.on){const ok=await SND.voice(`assets/kaptan-ses2/${id}.mp3`,v=>mouth(v<.02?0:v<.07?1:2));if(ok){mouth(0);return;}}
     talkSim=Math.min(200,text.length*2);await new Promise(r=>setTimeout(r,Math.min(4000,text.length*45)));}
   function act(a){if(!a)return;const[k,v]=a.split(/:(.*)/s);
     if(k==="go"){const el=$(v);if(el){if(lenis)lenis.scrollTo(el,{duration:1.6});else el.scrollIntoView({behavior:"smooth"});}}
