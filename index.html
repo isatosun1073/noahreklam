@@ -974,16 +974,8 @@ const SND=(()=>{
     const cv=ctx.createConvolver();cv.buffer=ir(5.5);const pre=ctx.createDelay(.1);pre.delayTime.value=.03;verb=G(1);const vr=G(.55),vhp=F("highpass",160);verb.connect(pre);pre.connect(cv);cv.connect(vhp);vhp.connect(vr);vr.connect(music);
     // ping-pong gecikme
     dly=G(1);const dl=ctx.createDelay(1),dr=ctx.createDelay(1),fb=G(.32),dlp=F("lowpass",2600),pl=P(-.7),pr=P(.7),dret=G(.35);dl.delayTime.value=.42;dr.delayTime.value=.63;dly.connect(dl);dl.connect(dlp);dlp.connect(pl);pl.connect(dret);dlp.connect(dr);dr.connect(pr);pr.connect(dret);dr.connect(fb);fb.connect(dl);dret.connect(music);dret.connect(verb);
-    // yaylılar
-    S.str=G(0);const lp=F("lowpass",900,.4),hp=F("highpass",90);S.lp=lp;lp.connect(hp);hp.connect(S.str);S.str.connect(music);const ss=G(.6);S.str.connect(ss);ss.connect(verb);
-    const l=ctx.createOscillator();l.frequency.value=.045;const ld=G(260);l.connect(ld);ld.connect(lp.frequency);l.start();
-    S.v=[0,1,2,3,4].map(i=>{const vg=G(i===0?.12:.16);const pan=P(-.6+i*.3);vg.connect(pan);pan.connect(lp);const os=[-9,0,9].map(dt=>{const o=ctx.createOscillator();o.type="sawtooth";o.detune.value=dt+(Math.random()*4-2);o.connect(vg);o.start();return o;});
-      const sl=ctx.createOscillator();sl.frequency.value=.12+Math.random()*.1;const sd=G(.05);sl.connect(sd);sd.connect(vg.gain);sl.start();return os;});
-    // alt bas
-    S.sub=G(0);S.subO=ctx.createOscillator();S.subO.type="sine";S.subO.connect(S.sub);S.subO.start();const sublp=F("lowpass",120);S.sub.connect(sublp);sublp.connect(music);
-    // hava / parıltı
-    S.air=G(0);const alp=F("bandpass",2400,.5);S.air.connect(alp);alp.connect(verb);const ad=G(.4);alp.connect(ad);ad.connect(music);
-    S.airO=[0,1].map(i=>{const o=ctx.createOscillator();o.type="sine";const g=G(.12);const tl=ctx.createOscillator();tl.frequency.value=3.2+i;const td=G(.06);tl.connect(td);td.connect(g.gain);tl.start();o.connect(g);g.connect(S.air);o.start();return o;});
+    // bestelenmiş temalar (örnek tabanlı orkestra) — bölümler arası çapraz geçiş
+    S.trk=G(1.05);S.trk.connect(music);
     // deniz (yumuşak, alçak)
     S.sea=G(0);const sb=ctx.createBufferSource();sb.buffer=BUF;sb.loop=true;const slp=F("lowpass",520,.3);const sw=G(.5);const swl=ctx.createOscillator();swl.frequency.value=.075;const swd=G(.42);swl.connect(swd);swd.connect(sw.gain);swl.start();sb.connect(slp);slp.connect(sw);sw.connect(S.sea);S.sea.connect(music);const sv=G(.3);S.sea.connect(sv);sv.connect(verb);sb.start();
     S.pno=G(.9);S.pno.connect(music);const pv=G(.6);S.pno.connect(pv);pv.connect(verb);const pd=G(.4);S.pno.connect(pd);pd.connect(dly);
@@ -993,8 +985,17 @@ const SND=(()=>{
     S.vox=G(1);S.vox.connect(master);
   }
   const T=()=>ctx.currentTime;
-  function setChord(t){const m=MIX[secK],ch=PR[m.p][ci%PR[m.p].length];S.v.forEach((os,i)=>os.forEach(o=>o.frequency.setTargetAtTime(mtof(ch[i]+(i===0?12:0)),t,.6)));S.subO.frequency.setTargetAtTime(mtof(ch[0]-12+12),t,.4);S.airO.forEach((o,i)=>o.frequency.setTargetAtTime(mtof(ch[3+i]+24),t,1));}
-  function mix(){const m=MIX[secK],t=T();S.str.gain.setTargetAtTime(m.str*.22,t,2);S.lp.frequency.setTargetAtTime(m.br,t,2.5);S.sub.gain.setTargetAtTime(m.sub*.22,t,2);S.air.gain.setTargetAtTime(m.air*.5,t,3);S.sea.gain.setTargetAtTime(m.sea*.32,t,2.5);S.pul.gain.setTargetAtTime(m.pul*.9,t,1);S.bird.gain.setTargetAtTime(m.bird*.12,t,2);}
+  function setChord(){}
+  function mix(){const m=MIX[secK],t=T();S.sea.gain.setTargetAtTime(m.sea*.2,t,2.5);S.bird.gain.setTargetAtTime(m.bird*.09,t,2);S.pul.gain.setTargetAtTime(0,t,.5);theme(m.p);}
+  // tema çalar: kusursuz döngü (dosya = [son .5 sn] + döngü + [ilk .5 sn])
+  const LEN={tufan:56.4706,tersane:57.6,kaptan:58.1818,acik:68.5714,kara:62.6087},TB={},TL={};let curT=null,curP=null,want=null;
+  function tload(p){if(!TL[p])TL[p]=fetch(`assets/muzik/${p}.mp3`).then(r=>r.arrayBuffer()).then(a=>new Promise((ok,no)=>ctx.decodeAudioData(a,ok,no))).then(b=>TB[p]=b).catch(()=>{TL[p]=null;});return TL[p];}
+  async function theme(p){want=p;if(curP===p)return;await tload(p);if(want!==p||curP===p||!on||!TB[p])return;
+    const t=T(),src=ctx.createBufferSource(),g=G(0);src.buffer=TB[p];src.loop=true;src.loopStart=.5;src.loopEnd=.5+LEN[p];src.connect(g);g.connect(S.trk);
+    src.start(t+.05,.5);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(1,t+(curT?3:2.2));
+    if(curT){const o=curT;o.g.gain.cancelScheduledValues(t);o.g.gain.setValueAtTime(o.g.gain.value,t);o.g.gain.linearRampToValueAtTime(0,t+3.2);try{o.src.stop(t+3.4);}catch(e){}}
+    curT={src,g};curP=p;
+    const nx={tufan:"tersane",tersane:"kaptan",kaptan:"acik",acik:"kara"}[p];if(nx)setTimeout(()=>tload(nx),4000);}
   // piyano: katmanlı, yumuşak
   function piano(t,m,vel=.25,pan=0){const f=mtof(m),g=G(0),p=P(pan),lp=F("lowpass",Math.min(5200,f*7),.3);g.connect(lp);lp.connect(p);p.connect(S.pno);
     [[1,1,2.6],[2,.42,1.6],[3,.18,1.1],[4.03,.08,.7],[.5,.05,2.4]].forEach(([r,a,d])=>{const o=ctx.createOscillator();o.type="sine";o.frequency.value=f*r;const og=G(0);og.gain.setValueAtTime(0,t);og.gain.linearRampToValueAtTime(a*vel,t+.006);og.gain.exponentialRampToValueAtTime(.0001,t+d*(f<300?1.6:1));o.connect(og);og.connect(g);o.start(t);o.stop(t+d*1.7);});g.gain.value=1;}
@@ -1002,11 +1003,9 @@ const SND=(()=>{
     const s=ctx.createBufferSource();s.buffer=BUF;const f=F("lowpass",420),ng=G(0);ng.gain.setValueAtTime(.35*v,t);ng.gain.exponentialRampToValueAtTime(.0001,t+.18);s.connect(f);f.connect(ng);ng.connect(S.pul);s.start(t,Math.random()*3);s.stop(t+.25);}
   function tick(t,v){const s=ctx.createBufferSource();s.buffer=BUF;const f=F("bandpass",2800,3),g=G(0);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+.05);s.connect(f);f.connect(g);g.connect(S.pul);s.start(t,Math.random()*3);s.stop(t+.08);}
   function bird(t){const b=2800+Math.random()*1200,n=2+Math.random()*3|0;for(let i=0;i<n;i++){const o=ctx.createOscillator(),g=G(0),tt=t+i*.12;o.frequency.setValueAtTime(b,tt);o.frequency.exponentialRampToValueAtTime(b*1.35,tt+.06);g.gain.setValueAtTime(0,tt);g.gain.linearRampToValueAtTime(.3,tt+.01);g.gain.exponentialRampToValueAtTime(.0001,tt+.09);o.connect(g);g.connect(S.bird);o.start(tt);o.stop(tt+.12);}}
-  function loop(){if(!on)return;const t=T(),m=MIX[secK],ch=PR[m.p][ci%PR[m.p].length];
-    if(t>=nextChord){ci++;setChord(t+.05);nextChord=t+m.bar;if(m.pno>.2)piano(t+.06,ch[0]+12,.22,0);}
-    if(m.pno>0&&t>=nextNote){const pool=[ch[2]+12,ch[3]+12,ch[4]+12,ch[1]+24,ch[2]+24,ch[4]+24];const n=pool[Math.random()*pool.length|0];piano(t+.05,n,.13+Math.random()*.08,Math.random()*1.2-.6);if(Math.random()<.3)piano(t+.05+.18,pool[Math.random()*pool.length|0],.09,Math.random()-.5);nextNote=t+(1.6+Math.random()*2.6)/m.pno;}
-    if(m.pul>0&&t>=nextBeat){const bpm=78+tersP*40,iv=60/bpm;const b=beatN%8;if(b===0||b===3||b===6)drum(t+.03,b===0?1:.7);tick(t+.03,b%2?.05:.09);beatN++;nextBeat=Math.max(nextBeat,t)+iv/2;}
-    if(m.bird>0&&t>=nextBird){bird(t+.05);nextBird=t+2.5+Math.random()*5;}
+  function loop(){if(!on)return;const t=T(),m=MIX[secK];
+    if(t>=nextChord){ci++;nextChord=t+m.bar;}
+    if(m.bird>0&&t>=nextBird){bird(t+.05);nextBird=t+3+Math.random()*6;}
   }
   // arayüz efektleri — yumuşak, tonal
   const FX={
