@@ -532,7 +532,7 @@ footer{position:relative;z-index:2;background:var(--ink);border-top:1px solid rg
       <h2 class="mega land" style="margin-top:22px"><span class="serif">Güvercin zeytin dalıyla döndü.</span>Kara<br>göründü.</h2>
       <div class="contact">
         <div class="c-side">
-          <p class="lede">Markanı gemiye almaya hazırsan rotayı birlikte çizelim. Formu doldur, hangi paketle başlamak istediğini seç; brief'in saniyeler içinde hazır olsun.</p>
+          <p class="lede">Markanı gemiye almaya hazırsan rotayı birlikte çizelim. Formu doldur, hangi paketle başlamak istediğini seç; mesajın WhatsApp'tan doğrudan bize ulaşsın.</p>
           <div id="cLines" class="mono" style="display:grid;gap:10px;color:#e9e3d9"></div>
         </div>
         <form class="form" id="form" novalidate>
@@ -549,9 +549,9 @@ footer{position:relative;z-index:2;background:var(--ink);border-top:1px solid rg
             </div>
           </div>
           <div class="field"><label class="mono" for="f-msg">Markan nereye gitmek istiyor?</label><textarea id="f-msg" name="msg" placeholder="Hedefin, sektörün, şu an yaşadığın en büyük problem…"></textarea></div>
-          <button class="btn red" type="submit" style="justify-self:start">Brief'i hazırla <span class="arr">→</span></button>
+          <button class="btn red" type="submit" style="justify-self:start">WhatsApp'tan gönder <span class="arr">→</span></button>
           <p class="mono" id="fErr" style="color:var(--signal);margin:0" hidden>Adını ve markanın adını yazman yeterli.</p>
-          <div class="brief" id="brief" hidden><p class="mono" style="margin:0;color:var(--signal)">Brief hazır</p><pre id="briefTxt"></pre><div><button class="btn" type="button" id="copyB">Kopyala</button></div></div>
+          <div class="brief" id="brief" hidden><p class="mono" style="margin:0;color:var(--signal)">WhatsApp açılıyor… Açılmazsa mesajı kopyalayıp 0546 632 83 39'a gönder.</p><pre id="briefTxt"></pre><div><button class="btn" type="button" id="copyB">Kopyala</button></div></div>
         </form>
       </div>
     </div>
@@ -598,8 +598,8 @@ footer{position:relative;z-index:2;background:var(--ink);border-top:1px solid rg
 (()=>{
 "use strict";
 /* ===== İletişim bilgileri: kendi bilgilerini buraya yaz ===== */
-const CONTACT={email:"",phone:"",instagram:"",address:"İstanbul",
-  whatsapp:"",   // örn. "905xxxxxxxxx" (başında + olmadan)
+const CONTACT={email:"",phone:"0546 632 83 39",instagram:"",address:"İstanbul",
+  whatsapp:"905466328339",
 };
 /* ===== Ölçüm: Google Analytics 4 ve Google Ads kimlikleri ===== */
 const TRACK={ga4:"",ads:"",adsLead:""}; // örn. ga4:"G-XXXX", ads:"AW-XXXX", adsLead:"AW-XXXX/abcDEF"
@@ -882,7 +882,7 @@ $("#dove").addEventListener("click",openNote);$("#noteClose").addEventListener("
 addEventListener("keydown",e=>{if(e.key!=="Escape")return;if(reader.classList.contains("open"))closePost();if(note.classList.contains("open"))closeNote();closeSheet();});
 // form
 $("#form").addEventListener("submit",e=>{e.preventDefault();const f=e.target,name=f.name.value.trim(),brand=f.brand.value.trim();if(!name||!brand){$("#fErr").hidden=false;(name?f.brand:f.name).focus();return;}$("#fErr").hidden=true;
-  const pkg=f.querySelector("input[name=pkg]:checked")?.value||"";$("#briefTxt").textContent=`NOAH REKLAM AJANSI — YENİ ROTA TALEBİ\n────────────────────────\nAd: ${name}\nMarka: ${brand}\nPaket: ${pkg}\nTarih: ${new Date().toLocaleDateString("tr-TR")}\n\nHedef / not:\n${f.msg.value.trim()||"—"}`;$("#brief").hidden=false;track("generate_lead",{package:pkg});if(CONTACT.whatsapp){location.href="https://wa.me/"+CONTACT.whatsapp+"?text="+encodeURIComponent($("#briefTxt").textContent);}});
+  const pkg=f.querySelector("input[name=pkg]:checked")?.value||"";$("#briefTxt").textContent=`Merhaba Noah Reklam Ajansı 👋\n\nAd: ${name}\nMarka: ${brand}\nPaket: ${pkg}\nTarih: ${new Date().toLocaleDateString("tr-TR")}\n\nHedef / not:\n${f.msg.value.trim()||"—"}`;$("#brief").hidden=false;track("generate_lead",{package:pkg});if(CONTACT.whatsapp){location.href="https://wa.me/"+CONTACT.whatsapp+"?text="+encodeURIComponent($("#briefTxt").textContent);}});
 $("#copyB").addEventListener("click",async e=>{const b=e.currentTarget;try{await navigator.clipboard.writeText($("#briefTxt").textContent);b.textContent="Kopyalandı ✓";}catch(err){const r=document.createRange();r.selectNodeContents($("#briefTxt"));const s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Metin seçildi — kopyala";}setTimeout(()=>b.textContent="Kopyala",2400);});
 
 /* ===== Ölçüm + çerez onayı + WhatsApp ===== */
