@@ -25,7 +25,7 @@ Bu yüzden Yeşilli'de reklam alanını sadece ilçeyle sınırlamak yerine, ger
 
 ## İşe yarayan reklam fikirleri
 
-1. **"Merkeze 15 dakika" mesajı:** Merkeze yakın olmanın avantajını reklamın içinde açıkça söylemek.
+1. **"Merkeze yakınız" mesajı:** Merkeze yakın olmanın avantajını reklamın içinde açıkça söylemek.
 2. **Hafta sonu reklamları:** Mekânlar için cuma ve cumartesi akşamları yoğunlaşan kısa video reklamlar.
 3. **Mesaj ve yol tarifi:** Reklamdan WhatsApp'a ve Google Haritalar'a yönlendirme.
 

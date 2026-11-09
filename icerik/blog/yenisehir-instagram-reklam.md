@@ -44,7 +44,7 @@ Diyarbakır'ın diğer ilçeleri için [Diyarbakır rehberimize](/blog/diyarbaki
 
 ### Avukatlık bürosu için Instagram reklamı verilebilir mi?
 
-Avukatlık mesleğinde reklam yasağı ve meslek kuralları var. Bu yüzden doğrudan "reklam" yerine bilgilendirici içerik ve görünürlük odaklı çalışıyoruz; meslek kurallarına uygunluğu baroya danışmanı öneririz.
+Avukatlık mesleğinde reklam yasağı ve meslek kuralları var. Bu yüzden doğrudan "reklam" yerine bilgilendirici içerik ve görünürlük odaklı çalışıyoruz; meslek kurallarına uygunluğu baroya danışmanızı öneririz.
 
 ### Google İşletme Profili'ni de siz mi düzenliyorsunuz?
 
