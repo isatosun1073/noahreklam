@@ -152,6 +152,39 @@ def cover_svg(slug, title=""):
 
 
 # ---------- blog ----------
+KAPTAN_MD = """
+<div class="kaptan" markdown="1">
+<img src="/assets/isa.webp" alt="İsa Tosun — Noah Reklam Ajansı kurucusu" width="96" height="96" loading="lazy">
+
+## Bu yazıyı kim yazdı? Neden bize güvenebilirsin?
+
+Merhaba, ben **İsa Tosun**; [Noah Reklam Ajansı](/)'nın kurucusuyum. Görsel iletişim tasarımcısıyım. Marka kimliği, sosyal medya reklamcılığı, arayüz tasarımı, motion design, 3D görselleştirme ve yapay zekâ destekli prodüksiyon üzerine çalışıyorum. Strateji, tasarım ve reklamı tek bir elde topluyoruz; yani reklamını kuran kişiyle görselini tasarlayan ekip aynı masada.
+
+Ajansımız İstanbul'da. Ama Instagram reklamı tamamen dijital yürüyen bir iş: {place_de} bir işletmeyle çalışmak, İstanbul'daki bir işletmeyle çalışmaktan farksız. Toplantıyı WhatsApp'ta ya da görüntülü görüşmede yapıyoruz, raporu her ay telefonuna gönderiyoruz.
+
+Neden içinin rahat olabileceğini kısaca anlatayım:
+
+- **Fiyatlarımız açık.** Sosyal medya paketlerimiz aylık [15.000 TL, 27.000 TL ve 39.000 TL](/#biletler); sitede yazıyor, sürpriz yok.
+- **Paran ajansta durmaz.** Reklam hesabı senin işletmenin adına açılır, reklam bütçesi senin kartından doğrudan Meta'ya, TikTok'a ya da Google'a ödenir. Harcamanın tamamını kendi panelinden görürsün.
+- **Her ay rapor.** Ne kadar harcandı, kaç kişiye ulaşıldı, kaç mesaj ya da satış geldi; hepsi anlaşılır bir raporla önüne gelir.
+- **Muhatabın belli.** Bir çağrı merkezine değil, doğrudan bize yazarsın: [0546 632 83 39](https://wa.me/905466328339).
+
+{place_de} işletmen için reklamın nasıl kurulacağını merak ediyorsan, [reklam yönetimi sayfamıza](/reklam-yonetimi/) göz atabilir ya da doğrudan WhatsApp'tan yazabilirsin.
+
+</div>
+"""
+
+
+def faq_from_html(h):
+    m = re.search(r'<h2 id="sikca-sorulan[^"]*">.*?</h2>(.*?)(?=<h2|$)', h, re.S)
+    if not m:
+        return []
+    parts = re.findall(r"<h3[^>]*>(.*?)</h3>(.*?)(?=<h3|$)", m.group(1), re.S)
+    strip = lambda x: re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", x)).strip()
+    qa = [(strip(q), strip(a)) for q, a in parts if strip(a)]
+    return [{"@type": "Question", "name": q, "acceptedAnswer": {"@type": "Answer", "text": a}} for q, a in qa]
+
+
 def parse_md(path):
     raw = path.read_text(encoding="utf-8")
     m = re.match(r"^---\s*\n(.*?)\n---\s*\n(.*)$", raw, re.S)
@@ -171,7 +204,13 @@ def parse_md(path):
     for req in ("title", "date", "category", "excerpt"):
         if req not in meta:
             raise SystemExit(f"{path.name}: '{req}' eksik")
-    md = markdown.Markdown(extensions=["extra", "sane_lists", "toc"], extension_configs={"toc": {"slugify": lambda v, s: slugify(v)}})
+    if meta.get("place"):
+        meta.setdefault("place_de", meta["place"] + "'de")
+        meta.setdefault("place_den", meta["place"] + "'den")
+        block = KAPTAN_MD.format(place_de=meta["place_de"])
+        mm = re.search(r"^## Sıkça sorulan", body, re.M)
+        body = body[:mm.start()] + block + "\n" + body[mm.start():] if mm else body + "\n" + block
+    md = markdown.Markdown(extensions=["extra", "sane_lists", "toc", "md_in_html"], extension_configs={"toc": {"slugify": lambda v, s: slugify(v)}})
     meta["html"] = md.convert(body)
     meta["toc"] = [(t["id"], t["name"]) for t in md.toc_tokens]
     words = len(re.findall(r"\w+", re.sub(r"<[^>]+>", " ", meta["html"])))
@@ -182,6 +221,7 @@ def parse_md(path):
     meta["updated"] = meta.get("updated") or meta["date"]
     meta["feature"] = meta.get("feature", "").lower() in ("evet", "true", "1", "yes")
     meta["url"] = f"/blog/{meta['slug']}/"
+    meta["faq"] = faq_from_html(meta["html"])
     return meta
 
 
@@ -261,7 +301,7 @@ def build_blog():
 <section class="post-cta dark"><div class="wrap">
   <p class="eyebrow mono"><span>Seyir defterinden <b>sahaya</b></span></p>
   <h2 class="h2"><span class="serif">Okuduğun şeyi markanda deneyelim mi?</span>Rotayı birlikte çizelim.</h2>
-  <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn red" href="https://wa.me/{WA}?text={quote('Merhaba, blogdaki “' + p['title'] + '” yazısını okudum. Markam için konuşmak istiyorum.')}" target="_blank" rel="noopener" data-wa>WhatsApp'tan yaz <span class="arr">→</span></a><a class="btn ghost" href="/reklam-yonetimi/">Reklam yönetimi</a><a class="btn ghost" href="/#biletler">Paketler</a></div>
+  <div style="display:flex;flex-wrap:wrap;gap:12px"><a class="btn red" href="https://wa.me/{WA}?text={quote((f"Merhaba, {p['place_den']} yazıyorum. Instagram reklamı / sosyal medya yönetimi için bilgi almak istiyorum." if p.get('place') else 'Merhaba, blogdaki “' + p['title'] + '” yazısını okudum. Markam için konuşmak istiyorum.'))}" target="_blank" rel="noopener" data-wa>WhatsApp'tan yaz <span class="arr">→</span></a><a class="btn ghost" href="/reklam-yonetimi/">Reklam yönetimi</a><a class="btn ghost" href="/#biletler">Paketler</a></div>
 </div></section>
 {more}'''''
         schema = [
@@ -272,6 +312,13 @@ def build_blog():
              "publisher": {"@type": "Organization", "name": "Noah Reklam Ajansı", "url": SITE + "/", "logo": {"@type": "ImageObject", "url": f"{SITE}/assets/noah-boat.png"}}},
             crumbs_ld([("Ana sayfa", "/"), ("Blog", "/blog/"), (p["category"], f"/blog/kategori/{p['cat_slug']}/"), (p["title"], p["url"])]),
         ]
+        if p["faq"]:
+            schema.append({"@context": "https://schema.org", "@type": "FAQPage", "mainEntity": p["faq"]})
+        if p.get("place"):
+            schema.append({"@context": "https://schema.org", "@type": "Service", "name": f"{p['place']} Instagram reklamı ve sosyal medya yönetimi", "serviceType": "Sosyal medya reklam yönetimi",
+                           "areaServed": {"@type": "City", "name": p["place"], "containedInPlace": {"@type": "AdministrativeArea", "name": p.get("province", p["category"])}},
+                           "provider": {"@type": "ProfessionalService", "name": "Noah Reklam Ajansı", "url": SITE + "/", "telephone": "+905466328339", "image": f"{SITE}/assets/og.jpg", "address": {"@type": "PostalAddress", "addressLocality": "İstanbul", "addressCountry": "TR"}},
+                           "url": SITE + p["url"]})
         head = f'<meta property="article:published_time" content="{p["date"]}"><meta property="article:modified_time" content="{p["updated"]}"><meta property="article:section" content="{esc(p["category"])}"><meta name="author" content="İsa Tosun">'
         write(f"blog/{p['slug']}/index.html", layout(title=p.get("seo_title") or f"{p['title']} | Noah Blog", desc=p["description"], path=p["url"], body=body, current="blog", schema=schema, og_type="article", extra_head=head, progress=True))
         write(f"blog/{p['slug']}/kapak.svg", cover_svg(p["slug"], p["title"]))
@@ -302,12 +349,15 @@ def build_blog():
             "Sosyal medya, Meta, Instagram, TikTok ve Google reklamları, marka kimliği ve içerik stratejisi üzerine sahadan öğrendiklerimiz.", None,
             [("Ana sayfa", "/"), ("Blog", "/blog/")],
             "Noah Reklam Ajansı blogu: sosyal medya yönetimi, Meta ve Instagram reklamları, TikTok, Google Ads, marka kimliği ve içerik stratejisi üzerine rehberler.")
+    kat_file = ROOT / "icerik/kategoriler.json"
+    KAT = json.loads(kat_file.read_text(encoding="utf-8")) if kat_file.exists() else {}
     for cs, (cname, _) in cats.items():
         sub = [p for p in posts if p["cat_slug"] == cs]
-        listing(sub, f"/blog/kategori/{cs}/", f"{cname} Yazıları | Noah Blog", esc(cname) + ".",
-                f"{esc(cname)} üzerine yazdığımız tüm kayıtlar.", cs,
+        k = KAT.get(cs, {})
+        listing(sub, f"/blog/kategori/{cs}/", k.get("title", f"{cname} Yazıları | Noah Blog"), esc(cname) + ".",
+                k.get("lede", f"{esc(cname)} üzerine yazdığımız tüm kayıtlar."), cs,
                 [("Ana sayfa", "/"), ("Blog", "/blog/"), (cname, f"/blog/kategori/{cs}/")],
-                f"Noah Reklam Ajansı blogunda {cname} kategorisindeki yazılar: rehberler, örnekler ve sahadan notlar.")
+                k.get("description", f"Noah Reklam Ajansı blogunda {cname} kategorisindeki yazılar: rehberler, örnekler ve sahadan notlar."))
 
     # arama verisi, RSS
     write("blog/posts.json", json.dumps([{"u": p["url"], "t": p["title"], "x": p["excerpt"], "c": p["category"], "d": tr_date(p["date"]), "m": p["minutes"], "k": p.get("keywords", "")} for p in posts], ensure_ascii=False))
