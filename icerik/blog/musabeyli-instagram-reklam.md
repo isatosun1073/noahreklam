@@ -27,7 +27,7 @@ Musabeyli, Kilis'in batısında, tarımın ve zeytinciliğin öne çıktığı k
 
 ## İlçe esnafı
 
-İlçe ve köyleri kapsayan, düşük bütçeli mesaj reklamları; gerekirse Kilis merkez ve Islahiye yönü.
+İlçe ve köyleri kapsayan, düşük bütçeli mesaj reklamları; gerekirse Kilis merkez ve İslahiye yönü.
 
 Kilis'in diğer ilçeleri için [Kilis rehberimize](/blog/kilis-instagram-reklam/) bakabilirsin.
 
