@@ -20,6 +20,12 @@ ROOT = Path(__file__).resolve().parent.parent
 SITE = "https://noahreklam.com"
 WA = "905466328339"
 PER_PAGE = 12
+CITY = "Şırnak"
+BEHANCE = "https://www.behance.net/isatosunn"
+ORG_ID = SITE + "/#organization"
+PERSON_ID = SITE + "/hakkimizda/#isa-tosun"
+WEBSITE_ID = SITE + "/#website"
+GUNEYDOGU = ["Şırnak", "Mardin", "Siirt", "Batman", "Diyarbakır", "Şanlıurfa", "Gaziantep", "Adıyaman", "Kilis"]
 AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
 TODAY = dt.date.today().isoformat()
 AC = ' aria-current="page"'
@@ -47,12 +53,28 @@ NAV_ITEMS = [
     ("/reklam-yonetimi/", "Reklam Yönetimi", "reklam"),
     ("/#biletler", "Paketler", None),
     ("/blog/", "Blog", "blog"),
-    ("/#kaptan", "Hakkımızda", None),
+    ("/hakkimizda/", "Hakkımızda", "hakkimizda"),
 ]
 
 
-def layout(*, title, desc, path, body, current=None, schema=(), og_type="website", og_image=None, extra_head="", body_class="", progress=False):
+def fit_title(t, limit=62):
+    for long_, short in ((" | Noah Reklam Ajansı", " | Noah"), (" | Noah Reklam", " | Noah"), (" | Noah Blog", " | Noah"), (" — Noah Reklam Ajansı", " | Noah")):
+        if len(t) > limit and t.endswith(long_):
+            t = t[: -len(long_)] + short
+    return t
+
+
+def fit_desc(d, limit=160):
+    if len(d) <= limit:
+        return d
+    cut = d[:limit]
+    dot = cut.rfind(". ")
+    return cut[: dot + 1] if dot > 100 else cut[: cut.rfind(" ")].rstrip(",;:") + "…"
+
+
+def layout(*, title, desc, path, body, current=None, schema=(), og_type="website", og_image=None, extra_head="", body_class="", progress=False, robots="index,follow,max-image-preview:large,max-snippet:-1"):
     url = SITE + path
+    title, desc = fit_title(title), fit_desc(desc)
     og_image = og_image or f"{SITE}/assets/og.jpg"
     nav = "".join(f'<li><a href="{h}"{AC if c and c == current else ""}>{esc(t)}</a></li>' for h, t, c in NAV_ITEMS)
     sheet = "".join(f'<li><a href="{h}"><span>{i:02d}</span>{esc(t)}</a></li>' for i, (h, t, c) in enumerate(NAV_ITEMS + [("/#kara", "İletişim", None)], 1))
@@ -65,13 +87,14 @@ def layout(*, title, desc, path, body, current=None, schema=(), og_type="website
 <title>{esc(title)}</title>
 <meta name="description" content="{esc(desc)}">
 <link rel="canonical" href="{url}">
-<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="robots" content="{robots}">
 <meta name="theme-color" content="#06080a">
 <meta property="og:type" content="{og_type}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Noah Reklam Ajansı">
 <meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}">
-<meta property="og:image" content="{og_image}"><meta property="og:locale" content="tr_TR">
-<meta name="twitter:card" content="summary_large_image">
-<link rel="icon" href="/assets/noah-boat.png">
+<meta property="og:image" content="{og_image}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:locale" content="tr_TR">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{esc(title)}"><meta name="twitter:description" content="{esc(desc)}"><meta name="twitter:image" content="{og_image}">
+<meta name="geo.region" content="TR-73"><meta name="geo.placename" content="Şırnak">
+<link rel="icon" href="/assets/noah-boat.png"><link rel="apple-touch-icon" href="/assets/noah-boat.png">
 <link rel="alternate" type="application/rss+xml" title="Noah Seyir Defteri" href="/blog/feed.xml">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -82,7 +105,7 @@ def layout(*, title, desc, path, body, current=None, schema=(), og_type="website
 {'<div class="progress" id="progress" aria-hidden="true"></div>' if progress else ''}
 <header class="nav mono">
   <div class="wrap">
-    <a class="brand" href="/" aria-label="Noah Reklam Ajansı — ana sayfa">{WORDMARK}<span class="tag">Reklam Ajansı · İstanbul</span></a>
+    <a class="brand" href="/" aria-label="Noah Reklam Ajansı — ana sayfa">{WORDMARK}<span class="tag">Reklam Ajansı · Şırnak</span></a>
     <ul>{nav}</ul>
     <a class="nav-cta" href="https://wa.me/{WA}?text={quote('Merhaba, Noah Reklam Ajansı ile çalışmak istiyorum.')}" target="_blank" rel="noopener" data-wa>Teklif al →</a>
     <button class="burger mono" id="burger" aria-expanded="false" aria-controls="sheet">Menü</button>
@@ -97,10 +120,10 @@ def layout(*, title, desc, path, body, current=None, schema=(), og_type="website
     <div class="f-grid">
       <div><p class="f-big">Rotayı<br>birlikte çizelim.</p><a class="btn red" href="https://wa.me/{WA}?text={quote('Merhaba, Noah Reklam Ajansı ile çalışmak istiyorum.')}" target="_blank" rel="noopener" data-wa>WhatsApp'tan yaz <span class="arr">→</span></a></div>
       <div><h4 class="mono">Hizmetler</h4><ul><li><a href="/reklam-yonetimi/">Reklam yönetimi</a></li><li><a href="/reklam-yonetimi/#meta">Meta reklamları</a></li><li><a href="/reklam-yonetimi/#instagram">Instagram reklamları</a></li><li><a href="/reklam-yonetimi/#tiktok">TikTok reklamları</a></li><li><a href="/reklam-yonetimi/#google">Google Ads</a></li><li><a href="/#ambar">Tüm hizmetler</a></li></ul></div>
-      <div><h4 class="mono">Ajans</h4><ul><li><a href="/#kaptan">İsa Tosun</a></li><li><a href="/#biletler">Sosyal medya paketleri</a></li><li><a href="/blog/">Blog</a></li><li><a href="/blog/feed.xml">RSS</a></li></ul></div>
-      <div><h4 class="mono">İletişim</h4><ul><li><a href="tel:+905466328339">0546 632 83 39</a></li><li><a href="https://wa.me/{WA}" target="_blank" rel="noopener">WhatsApp</a></li><li>İstanbul</li></ul></div>
+      <div><h4 class="mono">Ajans</h4><ul><li><a href="/hakkimizda/">Hakkımızda · İsa Tosun</a></li><li><a href="/#biletler">Sosyal medya paketleri</a></li><li><a href="/blog/">Blog</a></li><li><a href="/blog/feed.xml">RSS</a></li></ul></div>
+      <div><h4 class="mono">İletişim</h4><ul><li><a href="tel:+905466328339">0546 632 83 39</a></li><li><a href="https://wa.me/{WA}" target="_blank" rel="noopener">WhatsApp</a></li><li><a href="{BEHANCE}" target="_blank" rel="noopener me">Behance</a></li><li>Şırnak · Türkiye geneli</li></ul></div>
     </div>
-    <div class="f-row mono"><span>© {dt.date.today().year} Noah Reklam Ajansı · İstanbul</span><span>Kaptan: İsa Tosun</span><a href="/">noahreklam.com</a></div>
+    <div class="f-row mono"><span>© {dt.date.today().year} Noah Reklam Ajansı · Şırnak</span><span>Kaptan: İsa Tosun</span><a href="/">noahreklam.com</a></div>
   </div>
 </footer>
 <a class="wa" href="https://wa.me/{WA}?text={quote('Merhaba, Noah Reklam Ajansı ile çalışmak istiyorum.')}" target="_blank" rel="noopener" aria-label="WhatsApp ile yaz" data-wa>{WA_ICON}</a>
@@ -113,6 +136,90 @@ def layout(*, title, desc, path, body, current=None, schema=(), og_type="website
 def quote(s):
     from urllib.parse import quote as q
     return q(s, safe="")
+
+
+# ---------- kimlik (JSON-LD varlıkları) ----------
+ORG_REF = {"@type": "ProfessionalService", "@id": ORG_ID, "name": "Noah Reklam Ajansı", "url": SITE + "/", "telephone": "+905466328339",
+           "logo": {"@type": "ImageObject", "url": f"{SITE}/assets/noah-boat.png"}, "image": f"{SITE}/assets/og.jpg",
+           "address": {"@type": "PostalAddress", "addressRegion": CITY, "addressCountry": "TR"}}
+PERSON_REF = {"@type": "Person", "@id": PERSON_ID, "name": "İsa Tosun", "url": SITE + "/hakkimizda/", "image": f"{SITE}/assets/isa.webp",
+              "jobTitle": "Kurucu, Noah Reklam Ajansı · Görsel İletişim Tasarımcısı", "sameAs": [BEHANCE]}
+
+
+# ---------- paylaşım görselleri (1200×630 JPG, yazı başına) ----------
+FONT_DIR = ROOT / "tools/fonts"
+
+
+def og_url(slug):
+    return f"{SITE}/assets/og/{slug}.jpg"
+
+
+def og_image(slug, title, category):
+    import hashlib
+    try:
+        from PIL import Image, ImageDraw, ImageFont
+    except ImportError:
+        return
+    out = ROOT / f"assets/og/{slug}.jpg"
+    stamp = ROOT / "assets/og/.hash.json"
+    hashes = json.loads(stamp.read_text()) if stamp.exists() else {}
+    h = hashlib.md5(f"v3|{title}|{category}".encode()).hexdigest()[:10]
+    if out.exists() and hashes.get(slug) == h:
+        return
+    W, H = 1200, 630
+    rnd = random.Random(slug)
+    im = Image.new("RGB", (W, H), "#06080a")
+    d = ImageDraw.Draw(im)
+    horizon = H * .66
+    for x in range(0, W, 75):
+        d.line([(x, 0), (x, horizon)], fill=(17, 19, 21))
+    sx, sy, sr = rnd.uniform(.55, .88) * W, horizon - 4, rnd.uniform(44, 70)
+    d.pieslice([sx - sr, sy - sr, sx + sr, sy + sr], 180, 360, fill=(40, 14, 11))
+    d.arc([sx - sr, sy - sr, sx + sr, sy + sr], 180, 360, fill="#e23b2b", width=3)
+    n = rnd.randint(12, 18)
+    red_i = rnd.randrange(2, n)
+    for i in range(n):
+        y0 = horizon + (i / n) ** 1.6 * (H - horizon + 40)
+        amp = 3 + (i / n) * rnd.uniform(12, 30)
+        f1, f2, ph = rnd.uniform(.003, .008), rnd.uniform(.009, .02), rnd.uniform(0, 6.28)
+        pts = [(x, y0 + math.sin(x * f1 + ph) * amp + math.sin(x * f2 + ph * 2) * amp * .35) for x in range(0, W + 31, 30)]
+        g = int(40 + (i / n) * 120)
+        d.line(pts, fill="#e23b2b" if i == red_i else (g, g - 3, g - 8), width=3 if i == red_i else 2)
+    d.line([(0, horizon), (W, horizon)], fill=(90, 88, 84), width=1)
+    black = ImageFont.truetype(str(FONT_DIR / "Inter-Black.otf"), 58)
+    med = ImageFont.truetype(str(FONT_DIR / "Inter-Medium.otf"), 22)
+    d.text((64, 56), "NOAH  ·  SEYİR DEFTERİ", font=med, fill="#ede8df")
+    d.text((64, 92), category.replace("i", "İ").replace("ı", "I").upper(), font=med, fill="#e23b2b")
+    words, lines, cur = title.split(), [], ""
+    for w in words:
+        t = (cur + " " + w).strip()
+        if d.textlength(t, font=black) > W - 128 and cur:
+            lines.append(cur); cur = w
+        else:
+            cur = t
+    lines.append(cur)
+    size = 58
+    while len(lines) > 4 and size > 40:
+        size -= 6
+        black = ImageFont.truetype(str(FONT_DIR / "Inter-Black.otf"), size)
+        words, lines, cur = title.split(), [], ""
+        for w in words:
+            t = (cur + " " + w).strip()
+            if d.textlength(t, font=black) > W - 128 and cur:
+                lines.append(cur); cur = w
+            else:
+                cur = t
+        lines.append(cur)
+    lines = lines[:4]
+    y = 150
+    for ln in lines:
+        d.text((64, y), ln, font=black, fill="#ede8df")
+        y += int(size * 1.12)
+    d.text((64, H - 56), "noahreklam.com  ·  İsa Tosun", font=med, fill="#ede8df")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    im.save(out, "JPEG", quality=82, optimize=True, progressive=True)
+    hashes[slug] = h
+    stamp.write_text(json.dumps(hashes, ensure_ascii=False, indent=0, sort_keys=True))
 
 
 # ---------- kapak görselleri (her yazıya özgü, slug'dan tohumlanmış deniz çizgileri) ----------
@@ -158,11 +265,11 @@ KAPTAN_MD = """
 
 ## Bu yazıyı kim yazdı? Neden bize güvenebilirsin?
 
-Merhaba, ben **İsa Tosun**; [Noah Reklam Ajansı](/)'nın kurucusuyum. Görsel iletişim tasarımcısıyım. Marka kimliği, sosyal medya reklamcılığı, arayüz tasarımı, motion design, 3D görselleştirme ve yapay zekâ destekli prodüksiyon üzerine çalışıyorum. Strateji, tasarım ve reklamı tek bir elde topluyoruz; yani reklamını kuran kişiyle görselini tasarlayan ekip aynı masada.
+Merhaba, ben **İsa Tosun**; [Noah Reklam Ajansı](/)'nın kurucusuyum. Mehmet Akif Ersoy Üniversitesi Görsel İletişim Tasarımı mezunu bir görsel iletişim tasarımcısıyım. Marka kimliği, sosyal medya reklamcılığı, arayüz tasarımı, motion design, 3D görselleştirme ve yapay zekâ destekli prodüksiyon üzerine çalışıyorum. Strateji, tasarım ve reklamı tek bir elde topluyoruz; yani reklamını kuran kişiyle görselini tasarlayan ekip aynı masada.
 
-Ajansımız İstanbul'da. Ama Instagram reklamı tamamen dijital yürüyen bir iş: {place_de} bir işletmeyle çalışmak, İstanbul'daki bir işletmeyle çalışmaktan farksız. Toplantıyı WhatsApp'ta ya da görüntülü görüşmede yapıyoruz, raporu her ay telefonuna gönderiyoruz.
+Ajansımız Şırnak'ta; Güneydoğu'nun pazarını, dilini ve müşterisini içeriden tanıyoruz. Instagram reklamı da zaten tamamen dijital yürüyen bir iş: {place_de} bir işletmeyle çalışmak için aynı sokakta olmamız gerekmiyor. Toplantıyı WhatsApp'ta ya da görüntülü görüşmede yapıyoruz, raporu her ay telefonuna gönderiyoruz.
 
-Neden içinin rahat olabileceğini kısaca anlatayım:
+Neden içinin rahat olabileceğini kısaca anlatayım ([beni ve ajansı daha yakından tanı](/hakkimizda/)):
 
 - **Fiyatlarımız açık.** Sosyal medya paketlerimiz aylık [15.000 TL, 27.000 TL ve 39.000 TL](/#biletler); sitede yazıyor, sürpriz yok.
 - **Paran ajansta durmaz.** Reklam hesabı senin işletmenin adına açılır, reklam bütçesi senin kartından doğrudan Meta'ya, TikTok'a ya da Google'a ödenir. Harcamanın tamamını kendi panelinden görürsün.
@@ -200,6 +307,7 @@ def parse_md(path):
             meta[k.strip()] = v
     body = m.group(2)
     meta.setdefault("slug", path.stem)
+    meta["src"] = path.name
     meta["slug"] = slugify(meta["slug"])
     for req in ("title", "date", "category", "excerpt"):
         if req not in meta:
@@ -289,12 +397,12 @@ def build_blog():
 <header class="post-hero"><div class="wrap">
   <ol class="crumbs mono" aria-label="Konum"><li><a href="/">Ana sayfa</a></li><li><a href="/blog/">Blog</a></li><li><a href="/blog/kategori/{p['cat_slug']}/">{esc(p['category'])}</a></li></ol>
   <h1>{esc(p['title'])}</h1>
-  <div class="post-meta mono"><span class="au"><img src="/assets/isa.webp" alt="İsa Tosun" width="34" height="34">İsa Tosun</span><time datetime="{p['date']}">{tr_date(p['date'])}</time><span>{p['minutes']} dk okuma</span><a href="/blog/kategori/{p['cat_slug']}/" style="color:var(--signal);text-decoration:none">{esc(p['category'])}</a></div>
+  <div class="post-meta mono"><span class="au"><img src="/assets/isa.webp" alt="İsa Tosun" width="34" height="34">İsa Tosun</span><time datetime="{p['date']}">{tr_date(p['date'])}</time>{f'<span>Güncellendi: <time datetime="{p["updated"]}">{tr_date(p["updated"])}</time></span>' if p["updated"] != p["date"] else ''}<span>{p['minutes']} dk okuma</span><a href="/blog/kategori/{p['cat_slug']}/" style="color:var(--signal);text-decoration:none">{esc(p['category'])}</a></div>
 </div>
 <div class="wrap"><div class="post-cover"><img src="kapak.svg" alt="" width="1600" height="900" style="width:100%;height:100%;object-fit:cover"></div></div>
 </header>
 <div class="wrap">{toc}<div class="prose">{p['html']}</div>
-<div class="author"><img src="/assets/isa.webp" alt="İsa Tosun" width="72" height="72" loading="lazy"><div><span class="mono" style="color:var(--signal)">Yazan</span><br><b>İsa Tosun</b><p>Noah Reklam Ajansı'nın kurucusu. Strateji, tasarım ve dijital pazarlamayı tek bir rotada birleştiriyor.</p></div></div>
+<div class="author"><img src="/assets/isa.webp" alt="İsa Tosun" width="72" height="72" loading="lazy"><div><span class="mono" style="color:var(--signal)">Yazan</span><br><b><a href="/hakkimizda/" rel="author" style="color:inherit">İsa Tosun</a></b><p>Noah Reklam Ajansı'nın kurucusu, görsel iletişim tasarımcısı. Strateji, tasarım ve dijital pazarlamayı tek bir rotada birleştiriyor. <a href="{BEHANCE}" target="_blank" rel="noopener">Behance portfolyosu →</a></p></div></div>
 <div class="share"><span class="mono">Paylaş</span><a href="https://wa.me/?text={quote(p['title'] + ' ' + share_url)}" target="_blank" rel="noopener">WhatsApp</a><a href="https://www.linkedin.com/sharing/share-offsite/?url={quote(share_url)}" target="_blank" rel="noopener">LinkedIn</a><a href="https://twitter.com/intent/tweet?url={quote(share_url)}&text={quote(p['title'])}" target="_blank" rel="noopener">X</a><button type="button" data-copy="{share_url}">Linki kopyala</button></div>
 </div>
 </article>
@@ -306,10 +414,11 @@ def build_blog():
 {more}'''''
         schema = [
             {"@context": "https://schema.org", "@type": "BlogPosting", "headline": p["title"], "description": p["description"], "datePublished": p["date"], "dateModified": p["updated"],
-             "inLanguage": "tr-TR", "mainEntityOfPage": share_url, "url": share_url, "image": f"{SITE}/assets/og.jpg", "wordCount": p["words"], "articleSection": p["category"],
+             "inLanguage": "tr-TR", "mainEntityOfPage": share_url, "url": share_url, "image": {"@type": "ImageObject", "url": og_url(p["slug"]), "width": 1200, "height": 630}, "wordCount": p["words"], "articleSection": p["category"], "isPartOf": {"@id": SITE + "/blog/#blog"},
              "keywords": p.get("keywords", ""),
-             "author": {"@type": "Person", "name": "İsa Tosun", "url": f"{SITE}/#kaptan", "jobTitle": "Kurucu, Noah Reklam Ajansı"},
-             "publisher": {"@type": "Organization", "name": "Noah Reklam Ajansı", "url": SITE + "/", "logo": {"@type": "ImageObject", "url": f"{SITE}/assets/noah-boat.png"}}},
+             "author": PERSON_REF,
+             "publisher": ORG_REF,
+             **({"about": {"@type": "Place", "name": p["place"], "containedInPlace": {"@type": "AdministrativeArea", "name": p.get("province", p["category"])}}} if p.get("place") else {})},
             crumbs_ld([("Ana sayfa", "/"), ("Blog", "/blog/"), (p["category"], f"/blog/kategori/{p['cat_slug']}/"), (p["title"], p["url"])]),
         ]
         if p["faq"]:
@@ -317,10 +426,11 @@ def build_blog():
         if p.get("place"):
             schema.append({"@context": "https://schema.org", "@type": "Service", "name": f"{p['place']} Instagram reklamı ve sosyal medya yönetimi", "serviceType": "Sosyal medya reklam yönetimi",
                            "areaServed": {"@type": "City", "name": p["place"], "containedInPlace": {"@type": "AdministrativeArea", "name": p.get("province", p["category"])}},
-                           "provider": {"@type": "ProfessionalService", "name": "Noah Reklam Ajansı", "url": SITE + "/", "telephone": "+905466328339", "image": f"{SITE}/assets/og.jpg", "address": {"@type": "PostalAddress", "addressLocality": "İstanbul", "addressCountry": "TR"}},
+                           "provider": ORG_REF, "offers": {"@type": "AggregateOffer", "priceCurrency": "TRY", "lowPrice": "15000", "highPrice": "39000", "description": "Aylık sosyal medya ve reklam yönetimi paketleri (reklam bütçesi hariç)"},
                            "url": SITE + p["url"]})
         head = f'<meta property="article:published_time" content="{p["date"]}"><meta property="article:modified_time" content="{p["updated"]}"><meta property="article:section" content="{esc(p["category"])}"><meta name="author" content="İsa Tosun">'
-        write(f"blog/{p['slug']}/index.html", layout(title=p.get("seo_title") or f"{p['title']} | Noah Blog", desc=p["description"], path=p["url"], body=body, current="blog", schema=schema, og_type="article", extra_head=head, progress=True))
+        write(f"blog/{p['slug']}/index.html", layout(title=p.get("seo_title") or f"{p['title']} | Noah Blog", desc=p["description"], path=p["url"], body=body, current="blog", schema=schema, og_type="article", og_image=og_url(p["slug"]), extra_head=head, progress=True))
+        og_image(p["slug"], p["title"], p["category"])
         write(f"blog/{p['slug']}/kapak.svg", cover_svg(p["slug"], p["title"]))
 
     # liste sayfaları (tüm + kategori), sayfalı
@@ -338,8 +448,8 @@ def build_blog():
 <p class="lede">{lede}</p></div></section>
 {cats_bar(cats, current_cat)}
 <div class="wrap"><div class="grid" id="grid">{cards or '<p class="empty">Henüz yazı yok.</p>'}</div><p class="empty mono" id="none" hidden>Bu aramayla eşleşen yazı yok.</p>{pager(base, n, pages)}</div>'''
-            schema = [{"@context": "https://schema.org", "@type": "Blog" if current_cat is None else "CollectionPage", "name": t, "url": SITE + path, "inLanguage": "tr-TR", "description": desc,
-                       "publisher": {"@type": "Organization", "name": "Noah Reklam Ajansı", "url": SITE + "/"},
+            schema = [{"@context": "https://schema.org", "@type": "Blog" if current_cat is None else "CollectionPage", **({"@id": SITE + "/blog/#blog"} if current_cat is None and n == 1 else {}), "name": t, "url": SITE + path, "inLanguage": "tr-TR", "description": desc,
+                       "publisher": ORG_REF, "isPartOf": {"@id": WEBSITE_ID},
                        **({"blogPost": [{"@type": "BlogPosting", "headline": p["title"], "url": SITE + p["url"], "datePublished": p["date"]} for p in chunk]} if current_cat is None else {})},
                       crumbs_ld(crumbs)]
             write(path.lstrip("/") + "index.html", layout(title=t, desc=desc, path=path, body=body, current="blog", schema=schema))
@@ -401,6 +511,7 @@ def inject_home(posts):
     s2, n = re.subn(r"/\*POSTS\*/.*?/\*/POSTS\*/", lambda _: new, s, flags=re.S)
     if n != 1:
         raise SystemExit("index.html içinde /*POSTS*/ işareti bulunamadı")
+    s2 = prerender_home(s2, posts)
     idx.write_text(s2, encoding="utf-8")
 
 
@@ -412,9 +523,102 @@ def sitemap(posts, cats, pages):
     write("sitemap.xml", f'<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{body}</urlset>\n')
 
 
+# ---------- ana sayfa: JS ile basılan bölümlerin statik kopyası (botlar ve yapay zekâ tarayıcıları JS çalıştırmaz) ----------
+def _js_array(src, name):
+    import subprocess
+    m = re.search(r"const " + name + r"=(\[.*?\]);\n", src, re.S)
+    if not m:
+        return None
+    try:
+        r = subprocess.run(["node", "-e", f"process.stdout.write(JSON.stringify({m.group(1)}))"], capture_output=True, text=True, timeout=20)
+        return json.loads(r.stdout) if r.returncode == 0 else None
+    except Exception:
+        return None
+
+
+def _fill(src, key, html_):
+    pat = re.compile(r"<!--S:" + key + r"-->.*?<!--E:" + key + r"-->", re.S)
+    if not pat.search(src):
+        raise SystemExit(f"index.html içinde <!--S:{key}--> işareti yok")
+    return pat.sub(lambda _: f"<!--S:{key}-->{html_}<!--E:{key}-->", src)
+
+
+def prerender_home(s, posts):
+    serv, packs = _js_array(s, "SERVICES"), _js_array(s, "PACKS")
+    if serv:
+        parts = []
+        for i, x in enumerate(serv):
+            lis = "".join(f"<li>{t}</li>" for t in x["t"])
+            link = f'<a class="btn" href="{x["link"]}" style="margin-top:16px">Detaylı incele <span class="arr">→</span></a>' if x.get("link") else ""
+            parts.append(f'<div class="cargo" data-k="{i}"><button aria-expanded="false" aria-controls="cd{i}" id="cb{i}"><span class="code">{x["c"]}</span><span class="name">{x["n"]}</span><span class="short">{x["s"]}</span><span class="plus" aria-hidden="true">+</span></button><div class="detail" id="cd{i}" role="region" aria-labelledby="cb{i}"><div><div class="din"><span></span><p>{x["d"]}</p><ul>{lis}</ul>{link}</div></div></div></div>')
+        s = _fill(s, "manifest", "".join(parts))
+    if packs:
+        parts = []
+        for x in packs:
+            stamp = '<span class="stamp mono">En çok tercih edilen</span>' if x.get("pro") else ""
+            lis = "".join(f"<li><span>{t}</span></li>" for t in x["f"])
+            parts.append(f'<article class="ticket {"pro" if x.get("pro") else ""}">{stamp}<div class="t-top"><div class="t-name"><i aria-hidden="true"></i><h3>{x["n"]}<small>{x["sub"]}</small></h3></div><div class="t-gate mono">Kapı<b>{x["gate"]}</b></div></div><div class="t-price"><strong>{x["p"]}.<span>000</span> TL</strong><em class="mono">/ ay</em></div><ul class="feat">{lis}</ul><a class="btn t-cta" href="#kara" data-pick="{x["id"]}">Bu rotayı seç <span class="arr">→</span></a></article>')
+        s = _fill(s, "tickets", "".join(parts))
+    h = "".join(f'<a class="entry" href="{p["url"]}"><div class="meta mono"><span>{esc(p["category"])}</span><span>{tr_date(p["date"])} · {p["minutes"]} dk</span></div><h3>{esc(p["title"])}</h3><p>{esc(p["excerpt"])}</p><span class="read mono">Oku <i></i> →</span></a>' for p in posts[:4])
+    s = _fill(s, "log", h)
+    return s
+
+
+# ---------- yapay zekâ arama motorları için özet dosyalar (llms.txt) ----------
+def build_llms(posts, cats, pages):
+    by_cat = {}
+    for p in posts:
+        by_cat.setdefault(p["category"], []).append(p)
+    summary = ("> Şırnak merkezli reklam ve sosyal medya ajansı. Kurucusu görsel iletişim tasarımcısı İsa Tosun. Güneydoğu Anadolu'nun 9 iline ("
+               + ", ".join(GUNEYDOGU) + ") ve uzaktan tüm Türkiye'ye Meta (Facebook, Instagram), TikTok ve Google Ads reklam yönetimi, sosyal medya yönetimi, "
+               "marka kimliği, web/UI-UX, motion design, 3D görselleştirme ve yapay zekâ destekli prodüksiyon hizmeti verir.")
+    lines = [
+        "# Noah Reklam Ajansı", "", summary, "",
+        "## Temel bilgiler",
+        "- Ajans: Noah Reklam Ajansı (noahreklam.com)",
+        "- Konum: Şırnak, Türkiye. Hizmet bölgesi: Güneydoğu Anadolu ve Türkiye geneli (uzaktan; WhatsApp ve görüntülü görüşme ile)",
+        "- Kurucu: İsa Tosun — görsel iletişim tasarımcısı, Mehmet Akif Ersoy Üniversitesi Görsel İletişim Tasarımı mezunu. Portfolyo: " + BEHANCE,
+        "- İletişim: telefon ve WhatsApp 0546 632 83 39 (+90 546 632 83 39)",
+        "- Sosyal medya paketleri (aylık, reklam bütçesi hariç): START 15.000 TL, PRO 27.000 TL, PREMIUM 360° 39.000 TL",
+        "- Reklam bütçesi müşterinin kendi ödeme yöntemiyle doğrudan Meta, TikTok veya Google'a ödenir; reklam hesapları müşterinin işletmesi adına açılır; her ay rapor verilir.",
+        "",
+        "## Ana sayfalar",
+        f"- [Ana sayfa]({SITE}/): Hizmetler, sosyal medya paketleri ve fiyatlar, çalışma süreci, sık sorulan sorular, iletişim",
+    ]
+    lines += [f"- [{pg['title']}]({SITE}{pg['path']}): {pg['description']}" for pg in pages]
+    lines.append(f"- [Blog]({SITE}/blog/): Sosyal medya, reklam ve marka rehberleri; Güneydoğu'nun il ve ilçeleri için yerel Instagram reklamı rehberleri")
+    for cat, ps in by_cat.items():
+        lines += ["", f"## Blog — {cat}"]
+        lines += [f"- [{p['title']}]({SITE}{p['url']}): {p['description']}" for p in ps]
+    lines += ["", "## Ayrıntılı metin", f"- [Tüm yazıların tam metni]({SITE}/llms-full.txt)", ""]
+    write("llms.txt", "\n".join(lines))
+
+    full = ["# Noah Reklam Ajansı — tüm blog yazıları (tam metin)", "", summary, ""]
+    for p in posts:
+        raw = (ROOT / "icerik/blog" / p["src"]).read_text(encoding="utf-8")
+        body = re.sub(r"^---\s*\n.*?\n---\s*\n", "", raw, flags=re.S).strip()
+        body = re.sub(r"\]\(/", f"]({SITE}/", body)
+        full += ["---", f"# {p['title']}", f"URL: {SITE}{p['url']}",
+                 f"Yayın: {p['date']} · Güncelleme: {p['updated']} · Kategori: {p['category']} · Yazar: İsa Tosun (Noah Reklam Ajansı, Şırnak)", "", body, ""]
+    write("llms-full.txt", "\n".join(full))
+
+
+def build_404():
+    body = ('<section class="b-hero"><div class="wrap"><div style="display:grid;gap:20px">'
+            '<p class="eyebrow mono"><span>Hata <b>404</b></span></p>'
+            '<h1 class="h1"><span class="serif">Rotadan çıktık.</span>Bu sayfa bulunamadı.</h1></div>'
+            '<p class="lede">Aradığın sayfa taşınmış ya da hiç var olmamış olabilir. Aşağıdan devam edebilirsin.</p>'
+            '<div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:24px"><a class="btn red" href="/">Ana sayfa <span class="arr">→</span></a>'
+            '<a class="btn ghost" href="/blog/">Blog</a><a class="btn ghost" href="/reklam-yonetimi/">Reklam yönetimi</a><a class="btn ghost" href="/hakkimizda/">Hakkımızda</a></div>'
+            '</div></section>')
+    write("404.html", layout(title="Sayfa bulunamadı | Noah Reklam Ajansı", desc="Aradığın sayfa bulunamadı.", path="/404.html", body=body, robots="noindex,follow"))
+
+
 if __name__ == "__main__":
     posts, cats = build_blog()
     pages = build_pages(posts)
     inject_home(posts)
     sitemap(posts, cats, pages)
+    build_llms(posts, cats, pages)
+    build_404()
     print(f"✓ {len(posts)} yazı, {len(cats)} kategori, {len(pages)} özel sayfa üretildi.")

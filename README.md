@@ -21,3 +21,12 @@ Statik site (GitHub Pages + Cloudflare).
 
 ## Özel sayfalar
 `icerik/sayfalar/*.html` — ilk satırda `<!--META {...} -->` künyesi. `<details data-faq>` blokları otomatik FAQ şemasına dönüşür.
+
+## SEO / GEO (yapay zekâ arama) altyapısı
+`tools/build.py` her çalıştığında otomatik üretir:
+- **Yazı başına paylaşım görseli** `assets/og/<slug>.jpg` (1200×630; başlık değişince yenilenir)
+- **llms.txt / llms-full.txt** — ChatGPT, Perplexity, Claude, Gemini gibi motorlar için ajans özeti ve tüm yazıların tam metni
+- **Ana sayfanın statik kopyası** — hizmetler, paketler ve son yazılar HTML'e basılır (JS çalıştırmayan botlar da görür). `index.html` içindeki `<!--S:...-->` işaretlerini silme.
+- **JSON-LD varlık grafiği** — Organization (`/#organization`), Person (`/hakkimizda/#isa-tosun`), WebSite, BlogPosting, FAQ, Breadcrumb
+- **404.html**, sitemap, RSS
+`robots.txt` yapay zekâ botlarına açıkça izin verir. Cloudflare'de "AI botlarını engelle" ayarı kapalı olmalı.
