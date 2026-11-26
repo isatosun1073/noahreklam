@@ -1,0 +1,60 @@
+/* Zeytin — Noah sohbet asistanı (A · Kara gecesi) */
+.zt-l{position:fixed;z-index:60;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(84px + env(safe-area-inset-bottom,0px));width:58px;height:58px;border-radius:50%;border:1px solid #2b2e33;background:#0b0c0e;cursor:pointer;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:0;transition:transform .3s cubic-bezier(.3,1.5,.5,1)}
+.zt-l:hover{transform:scale(1.07)}
+.zt-l svg{width:50px;margin:2px 0 0 3px}
+.zt-l:focus-visible,.zt-p button:focus-visible,.zt-p input:focus-visible,.zt-p a:focus-visible{outline:2px solid #e23b2b;outline-offset:2px}
+.zt-tip{position:fixed;z-index:60;right:calc(max(16px,env(safe-area-inset-right,0px)) + 68px);bottom:calc(94px + env(safe-area-inset-bottom,0px));background:#ede8df;color:#151210;font:500 14px/1.35 system-ui,sans-serif;padding:10px 14px;border-radius:14px 14px 4px 14px;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:220px;opacity:0;transform:translateY(6px);transition:.35s;pointer-events:none}
+.zt-tip.on{opacity:1;transform:none}
+body.zt-open .zt-l,body.zt-open .zt-tip{opacity:0;pointer-events:none}
+.zt-p{position:fixed;z-index:70;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));width:390px;height:min(640px,calc(100svh - 40px));background:#0b0c0e;color:#ede8df;border-radius:22px;box-shadow:0 0 0 1px #24262a,0 30px 80px rgba(0,0,0,.55);display:flex;flex-direction:column;overflow:hidden;font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;transform-origin:100% 100%;transform:scale(.4) translateY(40px);opacity:0;pointer-events:none;transition:transform .45s cubic-bezier(.3,1.3,.5,1),opacity .25s}
+.zt-p.on{transform:none;opacity:1;pointer-events:auto}
+@media (max-width:600px){.zt-p{right:0;left:0;bottom:0;width:auto;height:min(92svh,100svh - env(safe-area-inset-top,0px));border-radius:22px 22px 0 0}.zt-l{bottom:calc(150px + env(safe-area-inset-bottom,0px));right:22px;width:52px;height:52px}.zt-l svg{width:44px}.zt-tip{right:84px;bottom:calc(158px + env(safe-area-inset-bottom,0px))}.zt-l.low{bottom:calc(84px + env(safe-area-inset-bottom,0px))}.zt-tip.low{bottom:calc(92px + env(safe-area-inset-bottom,0px))}}
+.zt-sky{position:relative;height:112px;flex:none;background:linear-gradient(#1d0e0b,#0b0c0e);overflow:hidden}
+.zt-sky::after{content:"";position:absolute;left:-10%;right:-10%;bottom:-30px;height:60px;background:radial-gradient(closest-side,rgba(226,59,43,.35),transparent)}
+.zt-fly{position:absolute;left:72%;top:30px;width:98px;margin-left:-49px;animation:ztDrift 6s ease-in-out infinite}
+.zt-fly.busy{animation-duration:1.6s}
+@keyframes ztDrift{0%,100%{transform:translate(-24px,4px) rotate(-3deg)}50%{transform:translate(24px,-4px) rotate(3deg)}}
+.zt-hd{position:absolute;inset:0 0 auto 0;display:flex;align-items:flex-start;justify-content:space-between;padding:16px 14px 0 18px;z-index:2}
+.zt-hd b{display:block;font-size:18px;line-height:1.1}
+.zt-hd span{font-size:13px;color:#a59d92;display:flex;align-items:center;gap:6px}
+.zt-hd span::before{content:"";width:7px;height:7px;border-radius:50%;background:#7d9a52}
+.zt-x{width:40px;height:40px;border-radius:50%;border:1px solid #2b2e33;background:rgba(11,12,14,.6);color:#ede8df;font:20px/1 system-ui;cursor:pointer}
+.zt-ms{flex:1;overflow-y:auto;padding:12px 14px 6px;display:flex;flex-direction:column;gap:10px;overscroll-behavior:contain}
+.zt-m{max-width:88%;padding:10px 13px;border-radius:16px;white-space:pre-wrap;overflow-wrap:anywhere;animation:ztPop .3s ease both}
+.zt-m.u{align-self:flex-end;background:#ede8df;color:#151210;border-bottom-right-radius:4px}
+.zt-m.z{align-self:flex-start;background:#1b1d21;border-bottom-left-radius:4px}
+.zt-m a{color:#ff8a7d;font-weight:600}
+.zt-m b{color:#fff}
+.zt-wa{display:inline-flex;align-items:center;gap:8px;margin-top:8px;background:#25d366;color:#06240f!important;text-decoration:none;font-weight:700;padding:9px 14px;border-radius:99px;white-space:normal}
+.zt-dots{display:inline-flex;gap:4px;padding:5px 2px}.zt-dots i{width:7px;height:7px;border-radius:50%;background:#ede8df;animation:ztDot 1s infinite}.zt-dots i:nth-child(2){animation-delay:.15s}.zt-dots i:nth-child(3){animation-delay:.3s}
+.zt-ch{display:flex;flex-wrap:wrap;gap:6px;padding:2px 14px 8px}
+.zt-ch button{font:500 13.5px system-ui,sans-serif;border-radius:99px;padding:8px 12px;min-height:38px;cursor:pointer;border:1px solid #3a3d43;background:transparent;color:#ede8df}
+.zt-ch button:hover{border-color:#e23b2b}
+.zt-f{display:flex;gap:8px;padding:8px 12px calc(12px + env(safe-area-inset-bottom,0px));border-top:1px solid #1d1f23}
+.zt-f input{flex:1;font:16px system-ui,sans-serif;border-radius:14px;padding:11px 13px;border:1px solid #2b2e33;background:#141518;color:#ede8df;min-height:46px}
+.zt-f button{flex:none;width:46px;height:46px;border-radius:14px;border:0;background:#e23b2b;color:#fff;font:700 20px/1 system-ui;cursor:pointer}
+.zt-f button:disabled{opacity:.45;cursor:default}
+.zt-note{font-size:11.5px;color:#7a736b;text-align:center;padding:0 14px 6px}
+@keyframes ztPop{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes ztDot{0%,100%{opacity:.25;transform:none}50%{opacity:1;transform:translateY(-3px)}}
+/* kuş */
+.zt-b{overflow:visible}
+.zt-b .zw{transform-box:view-box;transform-origin:52px 44px;animation:ztGlide 3.2s ease-in-out infinite}
+.zt-b .zh{transform-box:view-box;transform-origin:84px 46px}
+.zt-b .zk{transform-box:view-box;transform-origin:99px 41px}
+.zt-b .ze{transform-box:view-box;transform-origin:92px 35px;animation:ztBlink 4.6s infinite}
+.zt-b .zo{transform-box:view-box;transform-origin:106px 42px;animation:ztSway 2.8s ease-in-out infinite alternate}
+.zt-b .za{transform-box:view-box;transform-origin:60px 60px}
+.zt-b.think .zw{animation:ztFlap .28s ease-in-out infinite alternate}
+.zt-b.think .zh{animation:ztTilt .9s ease-in-out infinite alternate}
+.zt-b.talk .zw{animation:ztFlap .5s ease-in-out infinite alternate}
+.zt-b.talk .zk{animation:ztBeak .16s linear infinite alternate}
+.zt-b.hop .za{animation:ztHop .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes ztGlide{0%,100%{transform:rotate(0)}50%{transform:rotate(-6deg)}}
+@keyframes ztFlap{from{transform:rotate(8deg) scaleY(.8)}to{transform:rotate(-34deg)}}
+@keyframes ztTilt{from{transform:rotate(-4deg)}to{transform:rotate(9deg) translateY(1px)}}
+@keyframes ztBeak{from{transform:rotate(0)}to{transform:rotate(16deg)}}
+@keyframes ztBlink{0%,94%,100%{transform:scaleY(1)}96%{transform:scaleY(.1)}}
+@keyframes ztSway{from{transform:rotate(-5deg)}to{transform:rotate(6deg)}}
+@keyframes ztHop{0%{transform:none}40%{transform:translateY(-10px) rotate(-4deg)}100%{transform:none}}
+@media (prefers-reduced-motion:reduce){.zt-b *,.zt-fly,.zt-p,.zt-m{animation:none!important;transition:none!important}}

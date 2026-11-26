@@ -128,6 +128,8 @@ def layout(*, title, desc, path, body, current=None, schema=(), og_type="website
 </footer>
 <a class="wa" href="https://wa.me/{WA}?text={quote('Merhaba, Noah Reklam Ajansı ile çalışmak istiyorum.')}" target="_blank" rel="noopener" aria-label="WhatsApp ile yaz" data-wa>{WA_ICON}</a>
 <script src="/assets/sayfa.js?v={TODAY}" defer></script>
+<link rel="stylesheet" href="/assets/zeytin.css?v={TODAY}">
+<script src="/assets/zeytin.js?v={TODAY}" defer></script>
 </body>
 </html>
 """

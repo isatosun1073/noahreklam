@@ -1125,7 +1125,7 @@ if(SND.ok){
   $("#kpHide").addEventListener("click",()=>{try{sessionStorage.setItem("kp_off","1")}catch(e){};leave();});
   // bölüm takibi: her bölümde bir kez, biraz durunca
   let lastSec=null,since=0;
-  function blocked(){return !$("#loader").hidden||($("#sheet")&&$("#sheet").classList.contains("open"))||($("#reader")&&!$("#reader").hidden)||($("#note")&&!$("#note").hidden)||/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||"");}
+  function blocked(){return !$("#loader").hidden||document.body.classList.contains("zt-open")||($("#sheet")&&$("#sheet").classList.contains("open"))||($("#reader")&&!$("#reader").hidden)||($("#note")&&!$("#note").hidden)||/INPUT|TEXTAREA|SELECT/.test((document.activeElement||{}).tagName||"");}
   setInterval(()=>{if(off()||!D)return;const k=curK,n=Date.now();
     if(k!==lastSec){lastSec=k;since=n;if(state!=="off"&&curSec&&curSec!==k&&!engaged)leave();}
     if(!shownSec.has(k)&&state==="off"&&!busy&&wrap.hidden&&n-since>(k==="tufan"?2200:1400)&&!blocked())ask(k);},300);
@@ -1143,5 +1143,7 @@ onScroll();route();
 })();
 </script>
 
+<link rel="stylesheet" href="/assets/zeytin.css?v=1">
+<script src="/assets/zeytin.js?v=1" defer></script>
 </body>
 </html>
